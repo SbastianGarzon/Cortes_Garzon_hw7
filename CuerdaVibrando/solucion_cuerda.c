@@ -14,11 +14,17 @@ int main (int argc, char **argv){
   float r;
   float* u_inicial;
   u_inicial = malloc(n_points*sizeof(float));
+  float delta = L/n_points;
 
   
 
   for(i=0;i<n_points;i++){
-    if()
+    if((i*delta)<=(0.8*L)){
+      u_inicial[i]=(1.25*i)/L;
+    }
+    else{
+      u_inicial[i]=(5-5*i)/L;
+    }
   }
 
 
