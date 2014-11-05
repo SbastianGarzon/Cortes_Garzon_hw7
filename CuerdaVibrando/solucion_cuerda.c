@@ -6,7 +6,7 @@
 #define n_points 100
 #define t 121
 
-
+void copiar(float* a, float *b);
 int main (int argc, char **argv){
   
   int i;
@@ -27,7 +27,7 @@ int main (int argc, char **argv){
   u_presente = malloc(n_points*sizeof(float));
   
   if(argc!=2){
-   printf("debe introducir los parámetros de energía cinética y el ángulo pitch");
+   printf("debe introducir el parametro de densidad ");
     exit(1);
   }
 
@@ -48,25 +48,17 @@ int main (int argc, char **argv){
   for(i=1;i<n_points-1;i++){
     u_futuro[i]= u_inicial[i] + (((pow(r,2))/2.0)*(u_inicial[i+1] - (2.0*u_inicial[i]) + u_inicial[i-1]));
   }
-  
-  for(i=0;i<n_points;i++){
-    u_pasado[i]= u_inicial[i];
-    u_presente[i]= u_futuro[i];
-  }
-
+  copiar(u_pasado,u_inicial);
+  copiar(u_presente,u_futuro);
+    
   data = fopen("olakease.dat", "w");
-
 
   for(i=0;i<=t;i++){
     for(j=1;j<n_points-1;j++){
       u_futuro[j] = ((2.0*(1.0-pow(r,2)))*(u_presente[j]))-u_pasado[j]+ ((pow(r,2))*(u_presente[j+1]+u_presente[j-1]));
     }
-    for(m=0;m<n_points;m++){
-        u_pasado[m] = u_presente[m];
-    }
-    for(l=0;l<n_points;l++){
-     u_presente[l] = u_futuro[l];
-    }
+    copiar(u_pasado,u_presente);
+    copiar(u_presente,u_futuro);
     for(p=0;p<n_points;p++){
         if(p<(n_points-1)){
             fprintf(data, "%f ", u_presente[p]);
@@ -77,3 +69,13 @@ int main (int argc, char **argv){
     }
   }
 }
+/* a es el que actualizo,*/
+void copiar(float* a, float *b){
+    int i;
+    for(i=0;i<n_points;i++){
+        a[i]=b[i];
+    }
+}
+
+
+
