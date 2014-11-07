@@ -3,10 +3,12 @@
 #include<stdlib.h>
 #define T 40.0 /*Tension en Newton*/
 #define L 100.0 /*Longitud en metros*/
-#define n_points 100
-#define t 121
+#define n_points 1000
+#define t 120
 
 void copiar(float* a, float *b);
+
+
 int main (int argc, char **argv){
   
   int i;
