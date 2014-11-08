@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #define T 40.0 /*Tension en Newton*/
 #define L 100.0 /*Longitud en metros*/
-#define n_points 1000
+#define n_points 100
 #define t 120
 
 void copiar(float* a, float *b);
@@ -15,7 +15,7 @@ int main (int argc, char **argv){
   int j;
   float delta = L/n_points;
   int m,l,p;
-  float delta_t= 0.00158;
+  float delta_t=0.0145;
   float rho = atof(argv[1]);
   float c = sqrt(T/rho);
   float r=c*(delta_t/delta);
@@ -34,6 +34,7 @@ int main (int argc, char **argv){
    printf("debe introducir el parametro de densidad ");
     exit(1);
   }
+
   for(i=0;i<n_points;i++){
     if((i*delta)<=(0.8*L)){
       u_inicial[i]=(1.25*i*delta)/L;
@@ -42,6 +43,7 @@ int main (int argc, char **argv){
       u_inicial[i]=5-((5*i*delta)/L);
     }
   }
+    
   u_inicial[0] = 0.0;
   u_inicial[n_points-1] = 0.0;
   u_futuro[0] = 0.0;
@@ -56,15 +58,9 @@ int main (int argc, char **argv){
 
 
   for(i=0;i<=t;i++){
-    for(j=0;j<n_points;j++){
-        if(j==0 || j==n_points){
-            u_futuro[j] = 0;
-            fprintf(data, "%f ", u_futuro[j]);
-        }
-        else{
-            u_futuro[j] = (2.0*(1.0-pow(r,2)))*u_presente[j] - u_pasado[j] + (pow(r,2))*(u_presente[j+1] +  u_presente[j-1]);
-            fprintf(data, "%f ", u_futuro[j]);
-        }
+    for(j=1;j<n_points;j++){
+      u_futuro[j] = (2.0*(1.0-pow(r,2)))*u_presente[j] - u_pasado[j] + (pow(r,2))*(u_presente[j+1] +  u_presente[j-1]);
+      fprintf(data, "%f ", u_futuro[j]);
     }
     fprintf(data,"\n");
     copiar(u_pasado,u_presente);
