@@ -34,7 +34,8 @@ int main (int argc, char **argv){
    printf("debe introducir el parametro de densidad ");
     exit(1);
   }
-
+    
+  data = fopen("olakease.dat", "w");
   for(i=0;i<n_points;i++){
     if((i*delta)<=(0.8*L)){
       u_inicial[i]=(1.25*i*delta)/L;
@@ -49,25 +50,35 @@ int main (int argc, char **argv){
   u_futuro[0] = 0.0;
   u_futuro[n_points-1] = 0.0;
 
-  for(i=1;i<n_points-1;i++){
-      u_futuro[i] = u_inicial[i] + (pow(r,2)/2.0) * (u_inicial[i+1] - 2.0 * u_inicial[i] + u_inicial[i-1]);
+  for(i=0;i<=n_points;i++){
+      if(i==0 || i==n_points){
+           fprintf(data, "%f ", u_futuro[i]);
+      }
+      else{
+          u_futuro[i] = u_inicial[i] + (pow(r,2)/2.0) * (u_inicial[i+1] - 2.0 * u_inicial[i] + u_inicial[i-1]);
+          fprintf(data, "%f ", u_futuro[i]);
+      }
   }
+  fprintf(data,"\n");
   copiar(u_pasado,u_inicial);
   copiar(u_presente,u_futuro);
-  data = fopen("olakease.dat", "w");
 
-
-  for(i=0;i<=t;i++){
-    for(j=1;j<n_points;j++){
-      u_futuro[j] = (2.0*(1.0-pow(r,2)))*u_presente[j] - u_pasado[j] + (pow(r,2))*(u_presente[j+1] +  u_presente[j-1]);
-      fprintf(data, "%f ", u_futuro[j]);
+  for(i=0;i<t;i++){
+    for(j=0;j<=n_points;j++){
+        if (j==0 || j==n_points){
+            u_futuro[j]=0;
+            fprintf(data, "%f ", u_futuro[j]);
+        }
+        else{
+            u_futuro[j] = (2.0*(1.0-pow(r,2)))*u_presente[j] - u_pasado[j] + (pow(r,2))*(u_presente[j+1] +  u_presente[j-1]);
+            fprintf(data, "%f ", u_futuro[j]);
+        }
     }
     fprintf(data,"\n");
     copiar(u_pasado,u_presente);
     copiar(u_presente,u_futuro);
   }
 }
-
 void copiar(float* a, float *b){
     int i;
     for(i=0;i<n_points;i++){
