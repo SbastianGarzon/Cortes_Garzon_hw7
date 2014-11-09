@@ -18,8 +18,6 @@
 float predictor_sol(float* a, float *b, float* c, float* d, float* e, float* f);
 float corrector_sol(float* a, float *b, float* c, float* d, floar* e, float* f);
 
-
-
 int main (int argc, char **argv){
   
   if(argc!=2){
@@ -69,8 +67,39 @@ f3 = malloc(n_points*sizeof(float));
    }
  }
 
- //
+ //comenzar for de tiempo
 
+ for(i=0;i<n_points;i++){
+   for(j=1;j<n_points;j++){
+
+     
+
+
+   }
+
+ }
  return 0;
 
 }
+
+float predictor_sol(float* u1, float *u2, float* u3, float* f1, float* f2, float* f3, float delta) {
+  int j;
+  int i;
+  float u_mediop1;
+  float u_medion1;
+  float u_mediop2;
+  float u_medion2;
+  float u_mediop3;
+  float u_medion3;
+
+  for(i=1;i<n_points;i++){
+	u_mediop1= (0.5*(u1[i+1]+u1[i])) - (delta*0.5*(f1[i+1]-f1[i]));
+	u_medion1= (0.5*(u1[i-1]+u1[i])) - (delta*0.5*(f1[i-1]-f1[i]));
+	u_mediop2= (0.5*(u2[i+1]+u2[i])) - (delta*0.5*(f2[i+1]-f2[i]));
+	u_medion2= (0.5*(u2[i-1]+u2[i])) - (delta*0.5*(f2[i-1]-f2[i]));
+	u_mediop3= (0.5*(u3[i+1]+u3[i])) - (delta*0.5*(f3[i+1]-f3[i]));
+	u_medion3= (0.5*(u3[i-1]+u3[i])) - (delta*0.5*(f3[i-1]-f3[i]));
+	f
+  }
+}
+
