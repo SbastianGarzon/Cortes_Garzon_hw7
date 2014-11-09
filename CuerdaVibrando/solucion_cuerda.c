@@ -15,7 +15,7 @@ int main (int argc, char **argv){
   int j;
   float delta = L/n_points;
   int m,l,p;
-  float delta_t=0.0145;
+  float delta_t=0.015;
   float rho = atof(argv[1]);
   float c = sqrt(T/rho);
   float r=c*(delta_t/delta);
