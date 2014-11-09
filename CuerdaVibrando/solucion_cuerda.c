@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<math.h>
 #include<stdlib.h>
+//Definiendo constantes importantes
 #define T 40.0 /*Tension en Newton*/
 #define L 100.0 /*Longitud en metros*/
 #define n_points 100
@@ -22,19 +23,20 @@ int main (int argc, char **argv){
   float* u_presente;
   float* u_pasado;
   FILE* data;
+// metodo que crea el nombre del archivo
   char nombrearchivo[100];
   sprintf(nombrearchivo,"string_%.2f.dat",rho);
-    
+// Punteros a actualizar
   u_inicial = malloc(n_points*sizeof(float));
   u_futuro = malloc(n_points*sizeof(float));
   u_pasado = malloc(n_points*sizeof(float));
   u_presente = malloc(n_points*sizeof(float));
-  
+// Metodo que comprueba que el input sea correcto
   if(argc!=2){
    printf("debe introducir el parametro de densidad ");
     exit(1);
   }
-    
+// metodo que crea las condiciones iniciales del sistema
   data = fopen(nombrearchivo, "w");
   for(i=0;i<n_points;i++){
     if((i*delta)<=(0.8*L)){
@@ -44,12 +46,12 @@ int main (int argc, char **argv){
       u_inicial[i]=5-((5*i*delta)/L);
     }
   }
-    
+//metodo que fija las condiciones de frontera
   u_inicial[0] = 0.0;
   u_inicial[n_points-1] = 0.0;
   u_futuro[0] = 0.0;
   u_futuro[n_points-1] = 0.0;
-
+// metodo que actualiza las condiciones iniciales
   for(i=0;i<=n_points;i++){
       if(i==0 || i==n_points){
            fprintf(data, "%f ", u_futuro[i]);
@@ -62,7 +64,7 @@ int main (int argc, char **argv){
   fprintf(data,"\n");
   copiar(u_pasado,u_inicial);
   copiar(u_presente,u_futuro);
-
+// metodo que actualiza las condiciones del sistema a lo largo del tiempo
   for(i=0;i<t;i++){
     for(j=0;j<=n_points;j++){
         if (j==0 || j==n_points){
@@ -79,6 +81,7 @@ int main (int argc, char **argv){
     copiar(u_presente,u_futuro);
   }
 }
+// metodo que actualiza punteros, a es el puntero a actualizar y b es el puntero que se copia en a.
 void copiar(float* a, float *b){
     int i;
     for(i=0;i<n_points;i++){
