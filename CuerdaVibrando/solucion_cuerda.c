@@ -7,15 +7,13 @@
 #define t 120
 
 void copiar(float* a, float *b);
-
-
 int main (int argc, char **argv){
   
   int i;
   int j;
   float delta = L/n_points;
   int m,l,p;
-  float delta_t=0.015;
+  float delta_t=0.0145;
   float rho = atof(argv[1]);
   float c = sqrt(T/rho);
   float r=c*(delta_t/delta);
@@ -24,6 +22,8 @@ int main (int argc, char **argv){
   float* u_presente;
   float* u_pasado;
   FILE* data;
+  char nombrearchivo[100];
+  sprintf(nombrearchivo,"string_%.2f.dat",rho);
     
   u_inicial = malloc(n_points*sizeof(float));
   u_futuro = malloc(n_points*sizeof(float));
@@ -35,7 +35,7 @@ int main (int argc, char **argv){
     exit(1);
   }
     
-  data = fopen("olakease.dat", "w");
+  data = fopen(nombrearchivo, "w");
   for(i=0;i<n_points;i++){
     if((i*delta)<=(0.8*L)){
       u_inicial[i]=(1.25*i*delta)/L;
