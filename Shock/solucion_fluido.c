@@ -17,7 +17,9 @@
 
 float predictor_solp(float* u1, float* f1, float delta,int i);
 float predictor_soln(float* u1, float* f1, float delta,int i);
-float hallarf(float* u1, float* f1, float delta,int i);
+float hallarf1(float u2);
+float hallarf2(float u1, float u2, float u3,float gamma);
+float hallarf3(float u1, float u2, float u3,float gamma);
 float corrector_sol(float* u1, float* f1, float delta,int i);
 
 int main (int argc, char **argv){
@@ -82,9 +84,6 @@ f3 = malloc(n_points*sizeof(float));
  float f_medion2;
  float f_mediop3;
  float f_medion3;
- float u_new1;
- float u_new2;
- float u_new3;
 
  for(i=1;i<n_points;i++){
    u_mediop1 = predictor_solp(u1,f1,delta,i);
@@ -93,12 +92,15 @@ f3 = malloc(n_points*sizeof(float));
    u_medion1 = predictor_soln(u1,f1,delta,i);
    u_medion2 = predictor_soln(u2,f2,delta,i);
    u_medion3 = predictor_soln(u3,f3,delta,i);
-   f_mediop1 = hallarf1(u_mediop1,u_mediop2,u_mediop3,gamma,i);
-   f_medion1 = hallarf1(u_medion1,u_medion2,u_medion3,gamma,i);
-   f_mediop2 = hallarf2(u_mediop1,u_mediop2,u_mediop3,gamma,i);
-   f_medion2 = hallarf2(u_medion1,u_medion2,u_medion3,gamma,i);
-   f_mediop3 = hallarf3(u_mediop1,u_mediop2,u_mediop3,gamma,i);
-   f_medion3 = hallarf3(u_medion1,u_medion2,u_medion3,gamma,i);
+   f_mediop1 = hallarf1(u_mediop2);
+   f_medion1 = hallarf1(u_medion2);
+   f_mediop2 = hallarf2(u_mediop1,u_mediop2,u_mediop3,gamma);
+   f_medion2 = hallarf2(u_medion1,u_medion2,u_medion3,gamma);
+   f_mediop3 = hallarf3(u_mediop1,u_mediop2,u_mediop3,gamma);
+   f_medion3 = hallarf3(u_medion1,u_medion2,u_medion3,gamma);
+   u1[i+1] = corrector_sol(u1,f_mediop1,f_medion1,delta,i);
+   u2[i+1] = corrector_sol(u2,f_mediop2,f_medion2,delta,i);
+   u3[i+1] = corrector_sol(u3,f_mediop3,f_medion3,delta,i);
    
  }
  return 0;
@@ -120,12 +122,29 @@ float predictor_soln(float* u1, float* f1, float delta,int i) {
   return u_mediop1;
 
 }
-float hallarf(float* u1, float* f1, float delta,int i) {
+float hallarf1(float u2) {
 
   float u_mediop1;
   
-  u_mediop1= (0.5*(u1[i-1]+u1[i])) - (delta*0.5*(f1[i-1]-f1[i]));
+  u_mediop1= u2;
+  return u_mediop1;
+
+}
+float hallarf2(float u1, float u2, float u3, float gamma) {
+
+  float u_mediop1;
+  
+  u_mediop1= (u2*u2/u1)+((gamma-1)*(u3 - (0.5*u2*u2/u1)));
   return u_mediop1;
 
 }
 
+float hallarf3(float u1, float u2, float u3, float gamma) {
+
+  float u_mediop1;
+  
+  u_mediop1= u3+((gamma-1)*(u3 - (0.5*u2*u2/u1)));
+
+  return u_mediop1;
+
+}
