@@ -20,7 +20,7 @@ float predictor_soln(float* u1, float* f1, float delta,int i);
 float hallarf1(float u2);
 float hallarf2(float u1, float u2, float u3,float gamma);
 float hallarf3(float u1, float u2, float u3,float gamma);
-float corrector_sol(float* u1, float* f1, float delta,int i);
+float corrector_sol(float* u1, float f_medp, float f_medn, float delta,int i);
 
 int main (int argc, char **argv){
   
@@ -145,6 +145,14 @@ float hallarf3(float u1, float u2, float u3, float gamma) {
   
   u_mediop1= u3+((gamma-1)*(u3 - (0.5*u2*u2/u1)));
 
+  return u_mediop1;
+
+}
+float corrector_sol(float* u1, float f_medp, float f_medn, float delta,int i){
+  float u_mediop1;
+  
+  u_mediop1= u1[i] - (delta*(f_medp-f_medn));
+  
   return u_mediop1;
 
 }
