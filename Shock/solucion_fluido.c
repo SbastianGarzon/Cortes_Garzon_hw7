@@ -15,8 +15,10 @@
 #define n_points 1000
 #define dt 0.00001
 
-float predictor_sol(float* a, float *b, float* c, float* d, float* e, float* f);
-float corrector_sol(float* a, float *b, float* c, float* d, floar* e, float* f);
+float predictor_solp(float* u1, float* f1, float delta,int i);
+float predictor_soln(float* u1, float* f1, float delta,int i);
+float hallarf(float* u1, float* f1, float delta,int i);
+float corrector_sol(float* u1, float* f1, float delta,int i);
 
 int main (int argc, char **argv){
   
@@ -68,38 +70,57 @@ f3 = malloc(n_points*sizeof(float));
  }
 
  //comenzar for de tiempo
+ float u_mediop1;
+ float u_medion1;
+ float u_mediop2;
+ float u_medion2;
+ float u_mediop3;
+ float u_medion3;
+ float f_mediop1;
+ float f_medion1;
+ float f_mediop2;
+ float f_medion2;
+ float f_mediop3;
+ float f_medion3;
+ float u_new1;
+ float u_new2;
+ float u_new3;
 
- for(i=0;i<n_points;i++){
-   for(j=1;j<n_points;j++){
+ for(i=1;i<n_points;i++){
+   u_mediop1 = predictor_solp(u1,f1,delta,i);
+   u_mediop2 = predictor_solp(u2,f2,delta,i);
+   u_mediop3 = predictor_solp(u3,f3,delta,i);
+   u_medion1 = predictor_soln(u1,f1,delta,i);
+   u_medion2 = predictor_soln(u2,f2,delta,i);
+   u_medion3 = predictor_soln(u3,f3,delta,i);
+   f_mediop1 = hallarf(u1,f1,delta,i);
+   f_mediop2 = hallarf(u2,f2,delta,i);
+   f_mediop3 = hallarf(u3,f3,delta,i);
+   f_medion1 = hallarf(u1,f1,delta,i);
+   f_medion2 = hallarf(u2,f2,delta,i);
+   f_medion3 = hallarf(u3,f3,delta,i);
 
-     
-
-
-   }
-
+   
+   
+   
  }
  return 0;
 
 }
 
-float predictor_sol(float* u1, float *u2, float* u3, float* f1, float* f2, float* f3, float delta) {
-  int j;
-  int i;
-  float u_mediop1;
-  float u_medion1;
-  float u_mediop2;
-  float u_medion2;
-  float u_mediop3;
-  float u_medion3;
+float predictor_solp(float* u1, float* f1, float delta,int i) {
 
-  for(i=1;i<n_points;i++){
-	u_mediop1= (0.5*(u1[i+1]+u1[i])) - (delta*0.5*(f1[i+1]-f1[i]));
-	u_medion1= (0.5*(u1[i-1]+u1[i])) - (delta*0.5*(f1[i-1]-f1[i]));
-	u_mediop2= (0.5*(u2[i+1]+u2[i])) - (delta*0.5*(f2[i+1]-f2[i]));
-	u_medion2= (0.5*(u2[i-1]+u2[i])) - (delta*0.5*(f2[i-1]-f2[i]));
-	u_mediop3= (0.5*(u3[i+1]+u3[i])) - (delta*0.5*(f3[i+1]-f3[i]));
-	u_medion3= (0.5*(u3[i-1]+u3[i])) - (delta*0.5*(f3[i-1]-f3[i]));
-	f
-  }
+  float u_mediop1;
+  
+  u_mediop1= (0.5*(u1[i+1]+u1[i])) - (delta*0.5*(f1[i+1]-f1[i]));
+  return u_mediop1;
+}
+float predictor_soln(float* u1, float* f1, float delta,int i) {
+
+  float u_mediop1;
+  
+  u_mediop1= (0.5*(u1[i-1]+u1[i])) - (delta*0.5*(f1[i-1]-f1[i]));
+  return u_mediop1;
+
 }
 
