@@ -93,15 +93,12 @@ f3 = malloc(n_points*sizeof(float));
    u_medion1 = predictor_soln(u1,f1,delta,i);
    u_medion2 = predictor_soln(u2,f2,delta,i);
    u_medion3 = predictor_soln(u3,f3,delta,i);
-   f_mediop1 = hallarf(u1,f1,delta,i);
-   f_mediop2 = hallarf(u2,f2,delta,i);
-   f_mediop3 = hallarf(u3,f3,delta,i);
-   f_medion1 = hallarf(u1,f1,delta,i);
-   f_medion2 = hallarf(u2,f2,delta,i);
-   f_medion3 = hallarf(u3,f3,delta,i);
-
-   
-   
+   f_mediop1 = hallarf1(u_mediop1,u_mediop2,u_mediop3,gamma,i);
+   f_medion1 = hallarf1(u_medion1,u_medion2,u_medion3,gamma,i);
+   f_mediop2 = hallarf2(u_mediop1,u_mediop2,u_mediop3,gamma,i);
+   f_medion2 = hallarf2(u_medion1,u_medion2,u_medion3,gamma,i);
+   f_mediop3 = hallarf3(u_mediop1,u_mediop2,u_mediop3,gamma,i);
+   f_medion3 = hallarf3(u_medion1,u_medion2,u_medion3,gamma,i);
    
  }
  return 0;
@@ -116,6 +113,14 @@ float predictor_solp(float* u1, float* f1, float delta,int i) {
   return u_mediop1;
 }
 float predictor_soln(float* u1, float* f1, float delta,int i) {
+
+  float u_mediop1;
+  
+  u_mediop1= (0.5*(u1[i-1]+u1[i])) - (delta*0.5*(f1[i-1]-f1[i]));
+  return u_mediop1;
+
+}
+float hallarf(float* u1, float* f1, float delta,int i) {
 
   float u_mediop1;
   
