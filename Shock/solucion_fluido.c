@@ -36,6 +36,9 @@ int main (int argc, char **argv){
   float* f2;
   float* f3;
   FILE* data;
+  float* v;
+  float* rho;
+  float* P;
 
   float dx= (max_long-min_long)/1000;
   float gamma = 1.4;
@@ -48,8 +51,9 @@ int main (int argc, char **argv){
   f1 = malloc(n_points*sizeof(float));
   f2 = malloc(n_points*sizeof(float));
   f3 = malloc(n_points*sizeof(float));
-  
-
+  v=malloc(n_points*sizeof(float));
+  rho=malloc(n_points*sizeof(float));  
+  P=malloc(n_points*sizeof(float));
    
   //inicializar los punteros de acuerdo a las condiciones iniciales
   int i;
@@ -106,17 +110,22 @@ int main (int argc, char **argv){
     u1[i+1] = corrector_sol(u1,f_mediop1,f_medion1,delta,i);
     u2[i+1] = corrector_sol(u2,f_mediop2,f_medion2,delta,i);
     u3[i+1] = corrector_sol(u3,f_mediop3,f_medion3,delta,i);
+    rho[i]= u1[i];
+    v[i] = u2[i]/u1[i];
+    printf("%f %f \n",rho[i],v[i]);
+    
+    
 
   }
 
-
+  /*
   char n[150];
   sprintf(n,"estado_%.0f.dat",t_max);
   data = fopen(n, "w");
   for(i=0;i<n_points;i++){
     fprintf(data,"%f %f %f \n",u1[i],u2[i],u3[i]);
   }
-
+  */
   return 0;
   
 }
