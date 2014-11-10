@@ -11,24 +11,29 @@ float corrector_sol(float* u1, float f_medp, float f_medn, float delta,int i);
 
 int main (int argc, char **argv){
 
+  //esto revisa la cantidad de parametros que se recojen por consola
+  
   if(argc!=2){
     printf("debe introducir el parametro de tiempo");
     exit(1);
   }
-
-  float v_iI = 0.0;
-  float rho_iI =1.0;
-  float P_iI =100000.0;
-  float v_iD =0.0;
-  float rho_iD =0.125;
-  float P_iD =10000.0;
-  float t_min =0.0;
-  float t_max =0.1;
-  float min_long =-10.0;
-  float max_long =10.0;
+  //declaracion de condiciones inciales y condiciones de frontera
+  
+  float v_iI = 0.0; //velocidad incial del lado izquierdo m/s
+  float rho_iI =1.0; //densidad inicial del lado izquierdo kg/m3
+  float P_iI =100000.0; //presion inicial del lado izquierdo N/m2
+  float v_iD =0.0;  //velocidad incial del lado derecho m/s
+  float rho_iD =0.125; //densidad inicial del lado derecho kg/m3
+  float P_iD =10000.0; //presion inicial del lado derecho N/m2
+  float t_min =0.0; //tiempo incial en seg
+  float t_max =0.1; //tiempo final en seg
+  float min_long =-10.0; //condicion de frontera izquierda
+  float max_long =10.0; //condicion de frontera derecha
   float n_points =1000;
   float dt =0.00001;
   
+  //creacion de punteros que representan las componentes de los vectores u y f, tambien se crean punteros para abrir un archivo y los datos de velocidad, densidad y presion para cada punto luego de ejecutar el metodo
+
   float* u1;
   float* u2;
   float* u3;
@@ -41,9 +46,13 @@ int main (int argc, char **argv){
   float* P;
 
   float dx= (max_long-min_long)/1000;
+
+  //otras variables importantes
+
   float gamma = 1.4;
   float delta = dt/dx;
   
+  //dimensionar los punteros
   
   u1 = malloc(n_points*sizeof(float));
   u2 = malloc(n_points*sizeof(float));
@@ -80,7 +89,8 @@ int main (int argc, char **argv){
   }
  
   
-  //comenzar for de tiempo
+  //Aplicar el metodo, para esto se crearon punciones que hicieran todo por aparte
+
   float u_mediop1;
   float u_medion1;
   float u_mediop2;
@@ -112,11 +122,12 @@ int main (int argc, char **argv){
     u3[i+1] = corrector_sol(u3,f_mediop3,f_medion3,delta,i);
     rho[i]= u1[i];
     v[i] = u2[i]/u1[i];
-    printf("%f %f \n",rho[i],v[i]);
+    printf("%f %f \n",rho[i],v[i]); //aun no he sacado presion de cada punto esto es una prueba los datos estan dando mal
     
     
 
   }
+  //codigo para guardar en el archivo .dat, sin embargo todavia no es necesario hasta que no funcione todo bien
 
   /*
   char n[150];
@@ -131,7 +142,9 @@ int main (int argc, char **argv){
 }
 
 float predictor_solp(float* u1, float* f1, float delta,int i) {
-  
+
+//funcion que ejecuta la ecuacion 8 del metodo para i+1/2
+
   float u_mediop1;
   
   u_mediop1= (0.5*(u1[i+1]+u1[i])) - (delta*0.5*(f1[i+1]-f1[i]));
@@ -139,6 +152,8 @@ float predictor_solp(float* u1, float* f1, float delta,int i) {
 }
 float predictor_soln(float* u1, float* f1, float delta,int i) {
   
+//funcion que ejecuta la ecuacion 8 del metodo pero para i-1/2
+
   float u_mediop1;
   
   u_mediop1= (0.5*(u1[i-1]+u1[i])) - (delta*0.5*(f1[i-1]-f1[i]));
@@ -147,6 +162,8 @@ float predictor_soln(float* u1, float* f1, float delta,int i) {
 }
 float hallarf1(float u2) {
   
+//funcion que ejecuta halla la componente 1 de f
+
   float u_mediop1;
   
   u_mediop1= u2;
@@ -154,6 +171,8 @@ float hallarf1(float u2) {
 
 }
 float hallarf2(float u1, float u2, float u3, float gamma) {
+
+//funcion que ejecuta halla la componente 2 de f
   
   float u_mediop1;
   
@@ -164,6 +183,8 @@ float hallarf2(float u1, float u2, float u3, float gamma) {
 
 float hallarf3(float u1, float u2, float u3, float gamma) {
   
+//funcion que ejecuta halla la componente 3 de f
+
   float u_mediop1;
   
   u_mediop1= u3+((gamma-1)*(u3 - (0.5*u2*u2/u1)));
@@ -173,7 +194,9 @@ float hallarf3(float u1, float u2, float u3, float gamma) {
 }
 float corrector_sol(float* u1, float f_medp, float f_medn, float delta,int i){
   float u_mediop1;
-  
+ 
+  //funcion que ejecuta la ecuacion 9 del metodo
+
   u_mediop1= u1[i] - (delta*(f_medp-f_medn));
   
   return u_mediop1;
