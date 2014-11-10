@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<math.h>
 #include<stdlib.h>
-#define gamma 1.4
 #define v_iI 0.0
 #define rho_iI 1.0
 #define P_iI 100000.0
@@ -29,14 +28,17 @@ int main (int argc, char **argv){
     exit(1);
   }
 
-float* u1;
-float* u2;
-float* u3;
-float* f1;
-float* f2;
-float* f3;
+  float* u1;
+ float* u2;
+ float* u3;
+ float* f1;
+ float* f2;
+ float* f3;
+ 
+ float dx= (max_long-min_long)/1000;
+ float gamma = 1.4;
+ float delta = dt/dx;
 
-float dx= (max_long-min_long)/1000;
 
 u1 = malloc(n_points*sizeof(float));
 u2 = malloc(n_points*sizeof(float));
