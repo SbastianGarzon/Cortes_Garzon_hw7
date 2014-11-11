@@ -44,6 +44,7 @@ int main (int argc, char **argv){
   float* v;
   float* rho;
   float* P;
+  float* x;
 
   float dx= (max_long-min_long)/1000;
 
@@ -60,6 +61,7 @@ int main (int argc, char **argv){
   f1 = malloc(n_points*sizeof(float));
   f2 = malloc(n_points*sizeof(float));
   f3 = malloc(n_points*sizeof(float));
+  x = malloc (n_points*sizeof(float));
   v=malloc(n_points*sizeof(float));
   rho=malloc(n_points*sizeof(float));  
   P=malloc(n_points*sizeof(float));
@@ -88,7 +90,16 @@ int main (int argc, char **argv){
 
     }
   }
- 
+
+  //hacer el arreglo del x
+
+  for (i=0;i<n_points/2;i++){
+    x[i]= -10 + (dx*i);
+  }
+  for (i=0;i<n_points/2;i++){
+    int a = n_points/2;
+    x[a +i]= 0 + (dx*i);
+  }
   
   //Aplicar el metodo, para esto se crearon punciones que hicieran todo por aparte
 
@@ -162,10 +173,10 @@ int main (int argc, char **argv){
   //codigo para guardar en el archivo .dat
 
   char n[150];
-  sprintf(n,"estado_%.0f.dat",t_max);
+  sprintf(n,"estado_%f.dat",t_max);
   data = fopen(n, "w");
   for(i=0;i<n_points;i++){
-    fprintf(data,"%f %f %f \n",v[i],P[i],rho[i]);
+    fprintf(data,"%f %f %f %f \n",x[i],v[i],P[i],rho[i]);
   }
   
   return 0;
