@@ -26,7 +26,7 @@ int main (int argc, char **argv){
   float rho_iD =0.125; //densidad inicial del lado derecho kg/m3
   float P_iD =10000.0; //presion inicial del lado derecho N/m2
   float t_min =0.0; //tiempo incial en seg
-  float t_max =0.1; //tiempo final en seg
+  float t_max = atof(argv[1]); //tiempo final en seg
   float min_long =-10.0; //condicion de frontera izquierda
   float max_long =10.0; //condicion de frontera derecha
   float n_points =1000;
@@ -85,58 +85,89 @@ int main (int argc, char **argv){
       f1[i]=u2[i];
       f2[i]=(u2[i]*u2[i]/u1[i])+((gamma-1)*(u3[i] - (0.5*u2[i]*u2[i]/u1[i])));
       f3[i]=(u3[i])+((gamma-1)*(u3[i] - (0.5*u2[i]*u2[i]/u1[i])));
+
     }
   }
  
   
   //Aplicar el metodo, para esto se crearon punciones que hicieran todo por aparte
 
-  float u_mediop1;
-  float u_medion1;
-  float u_mediop2;
-  float u_medion2;
-  float u_mediop3;
-  float u_medion3;
-  float f_mediop1;
-  float f_medion1;
-  float f_mediop2;
-  float f_medion2;
-  float f_mediop3;
-  float f_medion3;
-  
-  for(i=1;i<n_points-1;i++){
-    u_mediop1 = predictor_solp(u1,f1,delta,i);
-    u_mediop2 = predictor_solp(u2,f2,delta,i);
-    u_mediop3 = predictor_solp(u3,f3,delta,i);
-    u_medion1 = predictor_soln(u1,f1,delta,i);
-    u_medion2 = predictor_soln(u2,f2,delta,i);
-    u_medion3 = predictor_soln(u3,f3,delta,i);
-    f_mediop1 = hallarf1(u_mediop2);
-    f_medion1 = hallarf1(u_medion2);
-    f_mediop2 = hallarf2(u_mediop1,u_mediop2,u_mediop3,gamma);
-    f_medion2 = hallarf2(u_medion1,u_medion2,u_medion3,gamma);
-    f_mediop3 = hallarf3(u_mediop1,u_mediop2,u_mediop3,gamma);
-    f_medion3 = hallarf3(u_medion1,u_medion2,u_medion3,gamma);
-    u1[i+1] = corrector_sol(u1,f_mediop1,f_medion1,delta,i);
-    u2[i+1] = corrector_sol(u2,f_mediop2,f_medion2,delta,i);
-    u3[i+1] = corrector_sol(u3,f_mediop3,f_medion3,delta,i);
-    rho[i]= u1[i];
-    v[i] = u2[i]/u1[i];
-    printf("%f %f \n",rho[i],v[i]); //aun no he sacado presion de cada punto esto es una prueba los datos estan dando mal
-    
-    
+  float* u_mediop1;
+  float* u_mediop2;
+  float* u_mediop3;
+  float* f_mediop1;
+  float* f_mediop2;
+  float* f_mediop3;
+  float* u1_new;
+  float* u2_new;
+  float* u3_new;
+  float* f1_new;
+  float* f2_new;
+  float* f3_new;
 
+  u_mediop1 = malloc(n_points*sizeof(float));
+  u_mediop2 = malloc(n_points*sizeof(float));
+  u_mediop3 = malloc(n_points*sizeof(float));
+
+  f_mediop1 = malloc(n_points*sizeof(float));
+  f_mediop2 = malloc(n_points*sizeof(float));
+  f_mediop3 = malloc(n_points*sizeof(float));
+
+  u1_new = malloc(n_points*sizeof(float));
+  u2_new = malloc(n_points*sizeof(float));
+  u3_new = malloc(n_points*sizeof(float));
+
+  f1_new = malloc(n_points*sizeof(float));
+  f2_new = malloc(n_points*sizeof(float));
+  f3_new = malloc(n_points*sizeof(float));
+  int j;
+  int m;
+  int k;
+  int tiempo = t_max/dt;
+  for(m=0;m<tiempo;m++){
+    for(i=0;i<n_points-1;i++){
+      u_mediop1[i] = predictor_solp(u1,f1,delta,i);
+      u_mediop2[i] = predictor_solp(u2,f2,delta,i);
+      u_mediop3[i] = predictor_solp(u3,f3,delta,i);
+      
+      f_mediop1[i] = hallarf1(u_mediop2[i]);
+      f_mediop2[i] = hallarf2(u_mediop1[i],u_mediop2[i],u_mediop3[i],gamma);
+      f_mediop3[i] = hallarf3(u_mediop1[i],u_mediop2[i],u_mediop3[i],gamma);
+    }
+    for(j=1;j<n_points-1;j++){
+      u1_new[j] = corrector_sol(u1,f_mediop1[j],f_mediop1[j-1],delta,j);
+      u2_new[j] = corrector_sol(u2,f_mediop2[j],f_mediop2[j-1],delta,j);
+      u3_new[j] = corrector_sol(u3,f_mediop3[j],f_mediop3[j-1],delta,j);
+      
+      f1_new[j] = hallarf1(u2_new[j]);
+      f2_new[j] = hallarf2(u1_new[j],u2_new[j],u3_new[j],gamma);
+      f3_new[j] = hallarf3(u1_new[j],u2_new[j],u3_new[j],gamma);
+
+      rho[j]=u1_new[j];
+      v[j]=u2_new[j]/rho[j];
+      P[j]=(gamma-1)*(u3_new[j]-u2_new[j]*u2_new[j]/(2.0*u1_new[j]));
+    }
+    for(k=0;k<n_points;k++){
+      u1[k]=u1_new[k];
+      u2[k]=u2_new[k];
+      u3[k]=u3_new[k];
+      f1[k]=f1_new[k];
+      f2[k]=f2_new[k];
+      f3[k]=f3_new[k];
+    } 
   }
-  //codigo para guardar en el archivo .dat, sin embargo todavia no es necesario hasta que no funcione todo bien
+  
+  
+    
+  //codigo para guardar en el archivo .dat
 
-  /*
   char n[150];
   sprintf(n,"estado_%.0f.dat",t_max);
   data = fopen(n, "w");
   for(i=0;i<n_points;i++){
-    fprintf(data,"%f %f %f \n",u1[i],u2[i],u3[i]);
+    fprintf(data,"%f %f %f \n",v[i],P[i],rho[i]);
   }
-  */
+  
   return 0;
   
 }
@@ -150,16 +181,7 @@ float predictor_solp(float* u1, float* f1, float delta,int i) {
   u_mediop1= (0.5*(u1[i+1]+u1[i])) - (delta*0.5*(f1[i+1]-f1[i]));
   return u_mediop1;
 }
-float predictor_soln(float* u1, float* f1, float delta,int i) {
-  
-//funcion que ejecuta la ecuacion 8 del metodo pero para i-1/2
 
-  float u_mediop1;
-  
-  u_mediop1= (0.5*(u1[i-1]+u1[i])) - (delta*0.5*(f1[i-1]-f1[i]));
-  return u_mediop1;
-  
-}
 float hallarf1(float u2) {
   
 //funcion que ejecuta halla la componente 1 de f
