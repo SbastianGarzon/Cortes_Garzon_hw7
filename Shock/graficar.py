@@ -6,10 +6,10 @@ nombreArchivo = sys.argv[1]
 data = np.loadtxt(nombreArchivo)
 name=nombreArchivo.replace(".dat","")
 
-x = data[:,1]
-v = data[:,2]
-P = data[:,3]
-rho = data[:,4]
+x = data[:,0]
+v = data[:,1]
+P = data[:,2]
+rho = data[:,3]
 
 fig = plt.figure(figsize=(9, 6))
 plt.subplot(2,2,1)
